@@ -3,12 +3,20 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
-import { UserButton, SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+import { UserButton, SignedIn, SignedOut, SignInButton, useUser } from "@clerk/nextjs";
+
+const ADMIN_EMAIL = "fariarahman416@gmail.com";
 
 export function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { itemCount } = useCart();
+    const { user } = useUser();
+
+    // Check if current user is the admin - check primary email first, then all emails
+    const userEmail = user?.primaryEmailAddress?.emailAddress;
+    const allEmails = user?.emailAddresses?.map(e => e.emailAddress) || [];
+    const isAdmin = userEmail === ADMIN_EMAIL || allEmails.includes(ADMIN_EMAIL);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -48,9 +56,12 @@ export function Header() {
                         <Link href="/orders" className="text-stone-600 hover:text-orange-600 transition-colors">
                             My Orders
                         </Link>
-                        <Link href="/admin" className="text-stone-600 hover:text-orange-600 transition-colors">
-                            Admin
-                        </Link>
+                        {/* Admin link - only visible to admin user */}
+                        {isAdmin && (
+                            <Link href="/admin" className="text-stone-600 hover:text-orange-600 transition-colors">
+                                Admin
+                            </Link>
+                        )}
                         <UserButton afterSignOutUrl="/" />
                     </SignedIn>
 
@@ -95,7 +106,10 @@ export function Header() {
                         <Link href="/reservations" onClick={() => setIsMobileMenuOpen(false)} className="text-stone-600 hover:text-orange-600 py-2">Reservations</Link>
                         <SignedIn>
                             <Link href="/orders" onClick={() => setIsMobileMenuOpen(false)} className="text-stone-600 hover:text-orange-600 py-2">My Orders</Link>
-                            <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)} className="text-stone-600 hover:text-orange-600 py-2">Admin</Link>
+                            {/* Admin link - only visible to admin user */}
+                            {isAdmin && (
+                                <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)} className="text-stone-600 hover:text-orange-600 py-2">Admin</Link>
+                            )}
                         </SignedIn>
                         <SignedOut>
                             <SignInButton mode="modal">
