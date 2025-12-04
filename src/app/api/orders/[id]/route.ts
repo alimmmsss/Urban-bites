@@ -4,10 +4,10 @@ import prisma from "@/lib/prisma";
 // PATCH /api/orders/[id] - Update order status
 export async function PATCH(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id } = params;
+        const { id } = await params;
         const body = await request.json();
         const { status } = body;
 
@@ -42,10 +42,10 @@ export async function PATCH(
 // GET /api/orders/[id] - Get single order
 export async function GET(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id } = params;
+        const { id } = await params;
 
         const order = await prisma.order.findUnique({
             where: { id },

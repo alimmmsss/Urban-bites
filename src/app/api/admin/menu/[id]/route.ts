@@ -4,10 +4,10 @@ import prisma from "@/lib/prisma";
 // PATCH /api/admin/menu/[id] - Update menu item (including stock toggle)
 export async function PATCH(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id } = params;
+        const { id } = await params;
         const body = await request.json();
 
         const menuItem = await prisma.menuItem.update({
@@ -32,10 +32,10 @@ export async function PATCH(
 // DELETE /api/admin/menu/[id] - Delete menu item
 export async function DELETE(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id } = params;
+        const { id } = await params;
 
         await prisma.menuItem.delete({
             where: { id },
@@ -57,10 +57,10 @@ export async function DELETE(
 // GET /api/admin/menu/[id] - Get single menu item
 export async function GET(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id } = params;
+        const { id } = await params;
 
         const menuItem = await prisma.menuItem.findUnique({
             where: { id },

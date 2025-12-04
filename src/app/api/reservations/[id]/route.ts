@@ -4,10 +4,10 @@ import prisma from "@/lib/prisma";
 // PATCH /api/reservations/[id] - Update reservation status
 export async function PATCH(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id } = params;
+        const { id } = await params;
         const body = await request.json();
         const { status } = body;
 
@@ -42,10 +42,10 @@ export async function PATCH(
 // DELETE /api/reservations/[id] - Cancel reservation
 export async function DELETE(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id } = params;
+        const { id } = await params;
 
         await prisma.reservation.update({
             where: { id },
