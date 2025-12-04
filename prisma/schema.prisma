@@ -1,0 +1,79 @@
+// Urban Bites - Database Schema
+// Framework: Prisma ORM with PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// MENU ITEMS
+// ============================================
+model MenuItem {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  price       Float
+  category    String
+  image       String
+  isAvailable Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([isAvailable])
+}
+
+// ============================================
+// ORDERS
+// ============================================
+enum OrderStatus {
+  PENDING
+  PREPARING
+  READY
+  COMPLETED
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  customerName  String
+  customerEmail String?
+  customerPhone String?
+  total         Float
+  status        OrderStatus @default(PENDING)
+  items         Json        // Array of {menuItemId, name, quantity, price}
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ============================================
+// RESERVATIONS
+// ============================================
+enum ReservationStatus {
+  CONFIRMED
+  CANCELLED
+}
+
+model Reservation {
+  id        String            @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  date      DateTime
+  time      String
+  partySize Int
+  notes     String?
+  status    ReservationStatus @default(CONFIRMED)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@index([date])
+  @@index([status])
+}
