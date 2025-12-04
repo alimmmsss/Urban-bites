@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 // ============================================
@@ -56,7 +57,7 @@ export async function createOrder(data: {
             customerEmail: data.customerEmail,
             customerPhone: data.customerPhone,
             total,
-            items: data.items,
+            items: JSON.parse(JSON.stringify(data.items)),
             status: "PENDING",
         },
     });
